@@ -20,14 +20,20 @@ const parseArguments = (args: Array<string>): bmiData => {
 
 const calculateBmi = (m: number, h: number) => {
   const bmi = m / (h * h) * 703
-  if (bmi < 15) return 'Very severely underweight'
-  if (bmi >= 15 && bmi < 16) return 'Severely underweight'
-  if (bmi >= 16 && bmi < 18.5) return 'Underweight'
-  if (bmi >= 18.5 && bmi < 25) return 'Normal (healthy weight)'
-  if (bmi >= 25 && bmi < 30) return 'Overweight'
-  if (bmi >= 30 && bmi < 35) return 'Obese Class I (Moderately obese)'
-  if (bmi >= 35 && bmi < 40) return 'Obese Class II (Severely obese)'
-  if (bmi >= 40) return 'Obese Class III (Very severely obese)'
+  let message = ''
+  if (bmi < 15) message = 'Very severely underweight'
+  if (bmi >= 15 && bmi < 16) message = 'Severely underweight'
+  if (bmi >= 16 && bmi < 18.5) message = 'Underweight'
+  if (bmi >= 18.5 && bmi < 25) message = 'Normal (healthy weight)'
+  if (bmi >= 25 && bmi < 30) message = 'Overweight'
+  if (bmi >= 30 && bmi < 35) message = 'Obese Class I (Moderately obese)'
+  if (bmi >= 35 && bmi < 40) message = 'Obese Class II (Severely obese)'
+  if (bmi >= 40) message = 'Obese Class III (Very severely obese)'
+  return {
+    weight: m,
+    height: h,
+    bmi: message
+  }
 }
 
 try {
@@ -36,3 +42,5 @@ try {
 } catch (e) {
   console.log(`Something blew up, message: ${e.message}`)
 }
+
+export default calculateBmi;
