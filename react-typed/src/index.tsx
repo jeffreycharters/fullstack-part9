@@ -27,24 +27,34 @@ const App: React.FC = () => {
     exerciseCount: number;
   }
 
-  const Content: React.FC<CoursePart> = ({ name, exerciseCount }) => {
-    return <p>{name} {exerciseCount}</p>
+  interface CourseParts {
+    courseParts: CoursePart[];
+  }
+
+  const Content: React.FC<CourseParts> = ({ courseParts }) => {
+    return (
+      <div>
+        {courseParts.map(part => {
+          return (
+            <p>
+              {part.name} {part.exerciseCount}
+            </p>
+          )
+        })}
+      </div>
+    )
   }
 
   const Total: React.FC<{ total: number }> = ({ total }) => {
-    return (
-      <p>
-        Number of exercises{" "}{total}
-      </p>
-    )
+    return <p>
+      <strong>Number of exercises{" "}{total}</strong>
+    </p>
   }
 
   return (
     <div>
       <Header name={courseName}></Header>
-      <Content name={courseParts[0].name} exerciseCount={courseParts[0].exerciseCount} />
-      <Content name={courseParts[1].name} exerciseCount={courseParts[1].exerciseCount} />
-      <Content name={courseParts[2].name} exerciseCount={courseParts[2].exerciseCount} />
+      <Content courseParts={courseParts} />
       <Total total={courseParts.reduce((carry, part) => carry + part.exerciseCount, 0)} />
     </div>
   );
