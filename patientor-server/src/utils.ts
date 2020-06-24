@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Gender, NewPatientEntry } from './types';
 
@@ -7,7 +8,8 @@ const toNewPatientEntry = (object: any): NewPatientEntry => {
     occupation: parseString(object.occupation),
     ssn: parseString(object.ssn),
     dateOfBirth: parseDate(object.dateOfBirth),
-    gender: parseGender(object.gender)
+    gender: parseGender(object.gender),
+    entries: []
   };
   return newEntry;
 };
