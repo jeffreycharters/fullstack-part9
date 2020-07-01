@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
-import { useStateValue } from '../state'
+import { useStateValue, setPatientList } from '../state'
 
 import 'semantic-ui-css/semantic.min.css'
 
@@ -13,24 +13,26 @@ const SinglePatientPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   React.useEffect(() => {
+    if (patients[id]) {
+      return
+    }
     const fetchPatient = async () => {
       try {
         const { data: patientFromApi } = await axios.get<Patient>(
           `${apiBaseUrl}/patients/${id}`
         );
+        dispatch(setPatientList([patientFromApi]));
       } catch (e) {
         console.error(e);
       }
     }
     fetchPatient();
-  }, [id])
+  }, [patients, dispatch, id])
 
   let patient = undefined
   if (Object.values(patients).map(p => p.id).includes(id)) {
     patient = patients[id]
   }
-
-  console.log(patient)
 
   if (patient !== undefined) {
     return <div>
