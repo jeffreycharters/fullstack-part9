@@ -9,7 +9,7 @@ import { Patient, Gender } from '../types'
 import { apiBaseUrl } from '../constants'
 
 const SinglePatientPage: React.FC = () => {
-  const [{ patients }, dispatch] = useStateValue();
+  const [{ patients, diagnoses }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string }>();
 
   React.useEffect(() => {
@@ -45,10 +45,14 @@ const SinglePatientPage: React.FC = () => {
 
       {
         patient.entries.map(e => {
-          return <div>
+          return <div key={`${e.date}`}>
             <div>{e.date}: <em>{e.description}</em></div>
             <ul>
-              <div>{e.diagnosisCodes && e.diagnosisCodes.map((c => <li>{c}</li>))}</div>
+              <div>{e.diagnosisCodes && e.diagnosisCodes.map(c => {
+                return <li key={`${c}${e.date}`}>{c} {diagnoses[c] ? diagnoses[c].name : null}</li>
+              }
+              )}
+              </div>
             </ul>
           </div>
         })
