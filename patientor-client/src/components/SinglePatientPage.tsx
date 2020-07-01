@@ -36,7 +36,7 @@ const SinglePatientPage: React.FC = () => {
 
   if (patient !== undefined) {
     return <div>
-      <h2>{patient.name} - <i className={patient.gender === Gender.Male ? 'mars icon' : patient.gender === Gender.Female ? 'venus icon' : ''}></i></h2>
+      <h2>{patient.name} <i className={patient.gender === Gender.Male ? 'mars icon' : patient.gender === Gender.Female ? 'venus icon' : ''}></i></h2>
 
       <strong>Date of Birth: {patient.dateOfBirth}<br />
       occupation: {patient.occupation}</strong>
