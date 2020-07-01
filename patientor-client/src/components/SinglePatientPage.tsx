@@ -40,6 +40,19 @@ const SinglePatientPage: React.FC = () => {
 
       <strong>Date of Birth: {patient.dateOfBirth}<br />
       occupation: {patient.occupation}</strong>
+
+      <h3>Entries</h3>
+
+      {
+        patient.entries.map(e => {
+          return <div>
+            <div>{e.date}: <em>{e.description}</em></div>
+            <ul>
+              <div>{e.diagnosisCodes && e.diagnosisCodes.map((c => <li>{c}</li>))}</div>
+            </ul>
+          </div>
+        })
+      }
     </div>
   }
   else {
