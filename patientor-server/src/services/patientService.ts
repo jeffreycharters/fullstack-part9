@@ -1,22 +1,25 @@
-import patientData from '../../data/patients';
-import { PublicPatient, Patient, NewPatientEntry } from '../types';
-
-const patients: Patient[] = patientData;
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import patients from '../../data/patients';
+import { Patient, NewPatientEntry } from '../types';
 
 const getEntries = (): Array<Patient> => {
+  console.log(patients[0]);
   return patients;
 };
 
-const getNonSensitiveEntries = (): PublicPatient[] => {
-  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+const getNonSensitiveEntries = (): Patient[] => {
+  return patients.map(({ id, name, dateOfBirth, gender, occupation, entries, ssn }) => ({
     id,
     name,
     dateOfBirth,
     gender,
     occupation,
+    entries,
+    ssn
   }));
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const addPatient = (object: any): NewPatientEntry => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const newPatientEntry = {

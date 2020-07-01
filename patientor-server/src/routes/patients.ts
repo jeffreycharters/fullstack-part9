@@ -15,7 +15,7 @@ router.get('/:id', (req, res) => {
 });
 
 router.get('/', (_req, res) => {
-  res.send(patientService.getNonSensitiveEntries());
+  res.send(patientService.getEntries());
 });
 
 router.post('/', (req, res) => {
