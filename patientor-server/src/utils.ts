@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Gender, NewPatientEntry } from './types';
+import { Gender, NewPatientEntry, NewEntry } from './types';
 
-const toNewPatientEntry = (object: any): NewPatientEntry => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const toNewPatientEntry = (object: any): NewPatientEntry => {
   const newEntry: NewPatientEntry = {
     name: parseString(object.name),
     occupation: parseString(object.occupation),
@@ -14,13 +16,26 @@ const toNewPatientEntry = (object: any): NewPatientEntry => {
   return newEntry;
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const toHospitalEntry = (object: any): NewEntry => {
+  const newEntry: NewEntry = {
+    description: parseString(object.description),
+    date: parseString(object.date),
+    specialist: parseString(object.specialist),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    diagnosisCodes: object.diagnosisCodes,
+    type: "Hospital"
+  };
+  return newEntry;
+};
+
 const isString = (text: any): text is string => {
   return typeof text === 'string' || text instanceof String;
 };
 
 const parseString = (words: any): string => {
   if (!words || !isString(words)) {
-    throw new Error('Incorrect or missing field: ' + words);
+    throw new Error(`Incorrect or missing field: ${words}`);
   }
   return words;
 };
@@ -31,7 +46,7 @@ const isDate = (date: string): boolean => {
 
 const parseDate = (date: any): string => {
   if (!date || !isString(date) || !isDate(date)) {
-    throw new Error('Incorrect or missing date: ' + date);
+    throw new Error(`Incorrect or missing date: ${date}`);
   }
   return date;
 };
@@ -42,9 +57,7 @@ const isGender = (param: any): param is Gender => {
 
 const parseGender = (gender: any): Gender => {
   if (!gender || !isGender(gender)) {
-    throw new Error('Incorrect or missing gender: ' + gender);
+    throw new Error(`Incorrect or missing gender: ${gender}`);
   }
   return gender;
 };
-
-export default toNewPatientEntry;
