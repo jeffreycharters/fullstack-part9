@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import patients from '../../data/patients';
-import { Patient, NewPatientEntry, Entry } from '../types';
+import { Patient, NewPatientEntry, Entry, NewEntry } from '../types';
 
 const getEntries = (): Array<Patient> => {
   return patients;
@@ -35,10 +35,27 @@ const findById = (id: string): Patient | undefined => {
   return entry;
 };
 
-const addEntry = (id: string, entry: NewPatientEntry) => {
+const addEntry = (id: string, entry: Omit<NewEntry, 'date'>) => {
+  let stringdd = '';
+  let stringmm = '';
+  const today = new Date();
+  const dd = today.getDate();
+  if (dd < 10) {
+    stringdd = `0${dd}`;
+  } else {
+    stringdd = String(dd);
+  }
+  const mm = today.getMonth() + 1;
+  if (mm < 10) {
+    stringmm = `0${mm}`;
+  } else {
+    stringmm = String(mm);
+  }
+  const yyyy = today.getFullYear();
   const newEntry = {
     ...entry,
-    id: String(Date.now())
+    id: String(Date.now()),
+    date: `${yyyy}-${stringmm}-${stringdd}`
   };
   const patient = patients.find(p => p.id === id);
   console.log(patient);

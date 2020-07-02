@@ -64,6 +64,12 @@ export enum Gender {
   Other = 'other'
 }
 
+export enum EntryType {
+  Hospital = 'Hospital',
+  OccupationalHealthcare = 'OccupationalHealthcare',
+  HealthCheckEntry = 'HealthCheck'
+}
+
 export interface Patient {
   id: string;
   name: string;
@@ -79,3 +85,7 @@ export type PublicPatient = Omit<Patient, 'ssn' | 'entries'>;
 export type NewPatientEntry = Omit<Patient, 'id'>;
 
 export type NewEntry = Omit<Entry, 'id'>;
+
+export type NewHospitalEntry = Omit<HospitalEntry, 'id' | 'date'>;
+export type NewOccupationalEntry = Omit<OccupationalHealthCare, 'id' | 'date'>;
+export type NewHealthCheckEntry = Omit<HealthCheckEntry, 'id' | 'date'>;

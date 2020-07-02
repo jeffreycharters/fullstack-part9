@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
 import { useStateValue, setPatientList } from '../state'
 
 import { Card, Icon } from 'semantic-ui-react'
+
+import HospitalEntryForm, { HospitalEntryFormValues } from './HospitalEntryForm'
+import OccupationalEntryForm, { OccupationalEntryFormValues } from './OccupationalEntryForm'
+import HealthCheckEntryForm, { HealthCheckEntryFormValues } from './HealthCheckEntryForm'
 
 import { Patient, Gender, Entry, HospitalEntry, OccupationalHealthcareEntry, HealthCheckEntry } from '../types'
 import { apiBaseUrl } from '../constants'
@@ -11,6 +15,11 @@ import { apiBaseUrl } from '../constants'
 const SinglePatientPage: React.FC = () => {
   const [{ patients }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string }>();
+  const [hospitalFormVisible, setHospitalFormVisible] = useState(false);
+  const [occupationalFormVisible, setOccupationalFormVisible] = useState(false);
+  const [healthCheckFormVisible, setHealthCheckFormVisible] = useState(false);
+
+  const [error, setError] = React.useState<string | undefined>();
 
   React.useEffect(() => {
     if (patients[id]) {
@@ -106,12 +115,77 @@ const SinglePatientPage: React.FC = () => {
   };
 
 
-  let patient = undefined
+  let patient: Patient | undefined = undefined
   if (Object.values(patients).map(p => p.id).includes(id)) {
     patient = patients[id]
   }
 
+  const doNothing = (): void => {
+    setHospitalFormVisible(false);
+    setOccupationalFormVisible(false);
+    setHealthCheckFormVisible(false);
+  }
+
+  const hospitalButtonHandler = () => {
+    setHospitalFormVisible(true);
+    setOccupationalFormVisible(false);
+    setHealthCheckFormVisible(false);
+  }
+
+  const occupationalButtonHandler = () => {
+    setHospitalFormVisible(false);
+    setOccupationalFormVisible(true);
+    setHealthCheckFormVisible(false);
+  }
+  const healthCheckButtonHandler = () => {
+    setHospitalFormVisible(false);
+    setOccupationalFormVisible(false);
+    setHealthCheckFormVisible(true);
+  }
+
   if (patient !== undefined) {
+    const submitNewHospitalEntry = async (values: HospitalEntryFormValues) => {
+      try {
+        const patientId = patient ? patient.id : null
+        const { data: newEntry } = await axios.post<Entry>(
+          `${apiBaseUrl}/patients/${patientId}/entries`,
+          values
+        );
+        console.log(newEntry)
+      } catch (e) {
+        console.error(e.response.data);
+        setError(e.response.data.error);
+      }
+    };
+
+    const submitNewOccupationalEntry = async (values: OccupationalEntryFormValues) => {
+      try {
+        const patientId = patient ? patient.id : null
+        const { data: newEntry } = await axios.post<Entry>(
+          `${apiBaseUrl}/patients/${patientId}/entries`,
+          values
+        );
+        console.log(newEntry)
+      } catch (e) {
+        console.error(e.response.data);
+        setError(e.response.data.error);
+      }
+    }
+
+    const submitNewHealthCheckEntry = async (values: HealthCheckEntryFormValues) => {
+      try {
+        const patientId = patient ? patient.id : null
+        const { data: newEntry } = await axios.post<Entry>(
+          `${apiBaseUrl}/patients/${patientId}/entries`,
+          values
+        );
+        console.log(newEntry)
+      } catch (e) {
+        console.error(e.response.data);
+        setError(e.response.data.error);
+      }
+    };
+
     return <div>
       <h2>{patient.name} <i className={patient.gender === Gender.Male ? 'mars icon' : patient.gender === Gender.Female ? 'venus icon' : ''}></i></h2>
 
@@ -120,27 +194,22 @@ const SinglePatientPage: React.FC = () => {
 
       <h3>Entries</h3>
 
-      { /*
-        patient.entries.map(e => {
-          return <div key={`${e.date}`}>
-            <div>{e.date}: <em>{e.description}</em></div>
-            <ul>
-              <div>{e.diagnosisCodes && e.diagnosisCodes.map(c => {
-                return <li key={`${c}${e.date}`}>{c} {diagnoses[c] ? diagnoses[c].name : null}</li>
-              }
-              )}
-              </div>
-            </ul>
-          </div>
-        })
-      */ }
+      {patient.entries.map(e => <EntryDetails entry={e} key={e.id} />)}
 
-      {
-        patient.entries.map(e => <EntryDetails entry={e} key={e.date} />)
-      }
+      <h3>Add new entry for this patient</h3>
+      <div>
+        <button onClick={hospitalButtonHandler}>Hospital Stay</button>{' '}
+        <button onClick={occupationalButtonHandler}>Occupational Visit</button>{' '}
+        <button onClick={healthCheckButtonHandler}>Health Check</button>
+      </div>
+      <br />
+      {hospitalFormVisible && <HospitalEntryForm onSubmit={submitNewHospitalEntry} onCancel={doNothing} />}
+      {occupationalFormVisible && <OccupationalEntryForm onSubmit={submitNewOccupationalEntry} onCancel={doNothing} />}
+      {healthCheckFormVisible && <HealthCheckEntryForm onSubmit={submitNewHealthCheckEntry} onCancel={doNothing} />}
 
     </div>
   }
+
   else {
     return <h2>No such patient..</h2>
   }

@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import express from 'express';
 import patientService from '../services/patientService';
-import { toNewPatientEntry } from '../utils';
-
-import { NewPatientEntry } from '../types';
+import { toNewPatientEntry, toHospitalEntry, toOccupationalEntry, toHealthCheckEntry } from '../utils';
 
 const router = express.Router();
 
@@ -34,13 +33,34 @@ router.post('/', (req, res) => {
 
 router.post('/:id/entries', (req, res) => {
   const patient = patientService.findById(req.params.id);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const entry: NewPatientEntry = req.body;
-  if (patient) {
-    const addEntry = patientService.addEntry(patient.id, entry);
-    res.json(addEntry);
-  } else {
+  if (!patient) {
     res.sendStatus(404);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const entry = req.body;
+  try {
+    switch (entry.type) {
+      case 'Hospital':
+        const hospitalEntry = toHospitalEntry(entry);
+        if (patient) { res.json(patientService.addEntry(patient.id, hospitalEntry)); }
+        break;
+      case 'OccupationalHealthcare':
+        const occupationalEntry = toOccupationalEntry(entry);
+        if (patient) {
+          res.json(patientService.addEntry(patient.id, occupationalEntry));
+        }
+        break;
+      case 'HealthCheck':
+        const healthCheckEntry = toHealthCheckEntry(entry);
+        if (patient) {
+          res.json(patientService.addEntry(patient.id, healthCheckEntry));
+        }
+        break;
+      default:
+        throw new Error(`Invalid type`);
+    }
+  } catch (e) {
+    res.status(400).send(e.message);
   }
 });
 

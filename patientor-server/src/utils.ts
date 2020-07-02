@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Gender, NewPatientEntry, NewEntry } from './types';
+import { Gender, NewPatientEntry, NewHospitalEntry, NewOccupationalEntry, NewHealthCheckEntry, HealthCheckRating } from './types';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const toNewPatientEntry = (object: any): NewPatientEntry => {
@@ -17,14 +17,48 @@ export const toNewPatientEntry = (object: any): NewPatientEntry => {
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const toHospitalEntry = (object: any): NewEntry => {
-  const newEntry: NewEntry = {
+export const toHospitalEntry = (object: any): NewHospitalEntry => {
+  const newEntry: NewHospitalEntry = {
     description: parseString(object.description),
-    date: parseString(object.date),
     specialist: parseString(object.specialist),
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    diagnosisCodes: object.diagnosisCodes,
-    type: "Hospital"
+    diagnosisCodes: parseList(object.diagnosisCodes),
+    type: 'Hospital',
+    discharge: {
+      date: parseDate(object.discharge.date),
+      criteria: parseString(object.discharge.criteria)
+    }
+  };
+  return newEntry;
+};
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const toOccupationalEntry = (object: any): NewOccupationalEntry => {
+  const newEntry: NewOccupationalEntry = {
+    description: parseString(object.description),
+    specialist: parseString(object.specialist),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    diagnosisCodes: parseList(object.diagnosisCodes),
+    type: 'OccupationalHealthcare',
+    employerName: parseString(object.employerName),
+    sickLeave: {
+      startDate: parseDate(object.sickLeave.startDate),
+      endDate: parseDate(object.sickLeave.endDate),
+    }
+  };
+  console.log('poo');
+  return newEntry;
+};
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const toHealthCheckEntry = (object: any): NewHealthCheckEntry => {
+  const newEntry: NewHealthCheckEntry = {
+    description: parseString(object.description),
+    specialist: parseString(object.specialist),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    diagnosisCodes: parseList(object.diagnosisCodes),
+    type: 'HealthCheck',
+    healthCheckRating: parseHealthCheckRating(object.healthCheckRating)
   };
   return newEntry;
 };
@@ -38,6 +72,17 @@ const parseString = (words: any): string => {
     throw new Error(`Incorrect or missing field: ${words}`);
   }
   return words;
+};
+
+const isList = (list: any): list is Array<string> => {
+  return list.constructor === Array;
+};
+
+const parseList = (list: any): Array<string> => {
+  if (!list || !isList(list)) {
+    throw new Error(`Incorrect or missing field: ${list}`);
+  }
+  return list;
 };
 
 const isDate = (date: string): boolean => {
@@ -60,4 +105,15 @@ const parseGender = (gender: any): Gender => {
     throw new Error(`Incorrect or missing gender: ${gender}`);
   }
   return gender;
+};
+
+const isHealthCheckRating = (param: any): param is HealthCheckRating => {
+  return Object.values(HealthCheckRating).includes(param);
+};
+
+const parseHealthCheckRating = (rating: any): HealthCheckRating => {
+  if (!rating || !isHealthCheckRating(rating)) {
+    throw new Error(`Incorrect of missing Health Check Rating: ${rating}`);
+  }
+  return rating;
 };
